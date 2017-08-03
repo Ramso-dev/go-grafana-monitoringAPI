@@ -524,85 +524,14 @@ var GaugesDedicatedNodes = `{
           "valueName": "current"
         },
         {
-          "aliasColors": {},
-          "bars": false,
-          "datasource": "prometheus_source",
-          "fill": 1,
+          "content": "",
           "id": 35,
-          "legend": {
-            "alignAsTable": true,
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "rightSide": true,
-            "show": true,
-            "sideWidth": 600,
-            "total": false,
-            "values": false
-          },
-          "lines": false,
-          "linewidth": 1,
           "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
+          "mode": "markdown",
           "span": 4,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(ALERTS{alertname=~\"PodHighMemoryConsumption\",alertname=~\"$alerts\"}) by (namespace,pod_name)",
-              "intervalFactor": 1,
-              "legendFormat": "project {{namespace}} - affected Pod:  {{pod_name}}",
-              "refId": "A",
-              "step": 1
-            },
-            {
-              "expr": "sum(ALERTS{alertname=~\"NodeDown\",alertname=~\"$alerts\"}) by (namespace,pod_name)",
-              "intervalFactor": 1,
-              "legendFormat": "instance is: {{kubernetes_io_hostname}}",
-              "refId": "B",
-              "step": 1
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Alert: $alerts",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "name": null,
-            "show": false,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ]
+          "title": "",
+          "transparent": true,
+          "type": "text"
         },
         {
           "cacheTimeout": null,
@@ -1034,7 +963,7 @@ var ProjectResourceQuotas = `
           "fill": 1,
           "id": 41,
           "legend": {
-            "alignAsTable": true,
+            "alignAsTable": false,
             "avg": false,
             "current": true,
             "max": false,
@@ -1690,7 +1619,7 @@ func DashboardTemplating(Label string, Namespace string) string { //TODO : hide 
 //TODO, change 1m averages to 5m or so, cause of the 120% error in gauges
 //TODO overwrite should be a parameter only used when updating dashboard
 
-func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOpressure bool, PanelResourcequotas bool) string {
+func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOpressure bool) string {
 	var DashboardPanels = dashboardHead //+ PanelIOpressure+ "," + GaugesDedicatedNodes + "," + PanelCPU + "," + PanelMemory
 
 	DashboardPanels = DashboardPanels + Help + ","
@@ -1708,11 +1637,9 @@ func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOp
 		DashboardPanels = DashboardPanels + PanelIOpressure + ","
 	}
 
-	if PanelResourcequotas == true {
-		DashboardPanels = DashboardPanels + ProjectResourceQuotas + ","
+	DashboardPanels = DashboardPanels + ProjectResourceQuotas + ","
 
-		DashboardPanels = DashboardPanels + PodsLimits + ","
-	}
+	DashboardPanels = DashboardPanels + PodsLimits + ","
 
 	//The last comma has to be removed, otherwise the dashboard is invalid
 	if strings.HasSuffix(DashboardPanels, ",") {

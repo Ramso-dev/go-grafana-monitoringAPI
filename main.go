@@ -31,17 +31,18 @@ type User struct {
 
 //RequestData  needed for grafana api requests. Email = Login = Username
 type RequestData struct {
-	OrgId           string `json:"orgId,omitempty"`
-	UserId          string `json:"userId,omitempty"`
-	Email           string `json:"email,omitempty"`
-	TenantID        string `json:"tenantID,omitempty"`
-	AuthToken       string `json:"authToken,omitempty"`
-	Role            string `json:"role,omitempty"`
-	TenantLabel     string `json:"tenantLabel,omitempty"`
-	PanelGauges     bool   `json:"panelGauges,omitempty"`
-	PanelCpu        bool   `json:"panelCpu,omitempty"`
-	PanelMemory     bool   `json:"panelMemory,omitempty"`
-	PanelIOpressure bool   `json:"panelIOpressure,omitempty"`
+	OrgId               string `json:"orgId,omitempty"`
+	UserId              string `json:"userId,omitempty"`
+	Email               string `json:"email,omitempty"`
+	TenantID            string `json:"tenantID,omitempty"`
+	AuthToken           string `json:"authToken,omitempty"`
+	Role                string `json:"role,omitempty"`
+	TenantLabel         string `json:"tenantLabel,omitempty"`
+	PanelGauges         bool   `json:"panelGauges,omitempty"`
+	PanelCpu            bool   `json:"panelCpu,omitempty"`
+	PanelMemory         bool   `json:"panelMemory,omitempty"`
+	PanelIOpressure     bool   `json:"panelIOpressure,omitempty"`
+	PanelResourcequotas bool   `json:"panelResourcequotas,omitempty"`
 }
 
 type AddUserToOrg struct {
@@ -51,8 +52,8 @@ type AddUserToOrg struct {
 
 //Test environment
 var grafanaBaseURL = "https://grafana-cw-portal-plg.playground.itandtel.at" //"http://localhost:8081"
-var prometheusURL = "https://promtest-cw-portal-plg.playground.itandtel.at"
-
+//var prometheusURL = "https://promtest-cw-portal-plg.playground.itandtel.at"
+var prometheusURL = "https://promtest2-cw-portal-plg.playground.itandtel.at"
 
 var apiBaseURL = "https://api.playground.itandtel.at"
 var OSCPBaseURL = "https://manage.playground.itandtel.at"
@@ -84,7 +85,7 @@ func InitEnvironmentVariables() {
 		OSCPBaseURL = os.Getenv("OSCP_API")
 
 		if ServiceAccount == "" {
-			fmt.Println("ServiceAccount environment var missing or invalid")
+			fmt.Println("SERVICE_ACCOUNT environment var missing or invalid")
 
 		}
 
@@ -564,7 +565,7 @@ func createDashboard(w http.ResponseWriter, req *http.Request) {
 		requestData.PanelGauges = false
 		requestData.PanelIOpressure = false
 	}
-	dashboardJSON := DashboardPanels(requestData.PanelGauges, requestData.PanelCpu, requestData.PanelMemory, requestData.PanelIOpressure) + DashboardTemplating(requestData.TenantLabel, requestData.TenantID) + DashboardJSON1B
+	dashboardJSON := DashboardPanels(requestData.PanelGauges, requestData.PanelCpu, requestData.PanelMemory, requestData.PanelIOpressure, requestData.PanelResourcequotas) + DashboardTemplating(requestData.TenantLabel, requestData.TenantID) + DashboardJSON1B
 
 	rawIn := json.RawMessage(dashboardJSON)
 	dashboardBytes, err := rawIn.MarshalJSON()

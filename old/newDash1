@@ -16,30 +16,6 @@ var dashboardHead = `{
     "refresh": "10s",
   "rows": [`
 
-var Help = `{
-      "collapse": true,
-      "height": 250,
-      "panels": [
-        {
-          "content": "<font color=\"#ff9966\"><u><b>Node Graphs's variables</b></u> <br></font>\n<font color=\"#5cd6d6\"><b>Node:</b></font> shows a list of all nodes available in the environment. <br>\n<font color=\"#5cd6d6\"><b>NodeLabel:</b></font> dinamically discovers all node labels in the environment. When a label is chosen, it filters the 'Node' list, which shows only the labeled nodes <br><br>\n\n<font color=\"#ff9966\"><u><b>Openshift Graphs's variables</b></u> <br></font>\n<font color=\"#5cd6d6\"><b>showTotal:</b></font> if true, shows the total value for memory and CPU usages. <br>\n<font color=\"#5cd6d6\"><b>Namespace:</b></font> dinamically discovers all numerical namespaces in the environment. Choosing a namespace will restrict the graphs to that namespace.<br>\n<font color=\"#5cd6d6\"><b>Projects:</b></font> filters the shown projects for the variable 'Namespace'.  Choosing a project will restrict the graphs to that project.<br>\n<font color=\"#5cd6d6\"><b>Pods:</b></font> filters the shown pods for the variables 'Namespace'. Choosing a pod will restrict the graphs to that pod.<br>\n<font color=\"#5cd6d6\"><b>division:</b></font> selects which openshift module is represented in the graphics: pods, containers or projects.<br>\n<font color=\"#5cd6d6\"><b>referenceTo:</b></font> selects to which module the division variable is compared: for example, if 'division' is Pods and 'referenceTo' is Nodes, it will show in which node is that pod running .<br>",
-          "description": "Help",
-          "id": 40,
-          "links": [],
-          "mode": "html",
-          "span": 12,
-          "title": "Help",
-          "transparent": false,
-          "type": "text"
-        }
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": false,
-      "title": "Help",
-      "titleSize": "h6"
-    }`
-
 var PanelIOpressure = `{
       "collapse": false,
       "height": "200px",
@@ -190,16 +166,16 @@ var PanelMemory = `{
           "steppedLine": true,
           "targets": [
             {
-              "expr": "sum (container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}) by ($division,$referenceTo)",
+              "expr": "sum (container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\"}) by ($division)",
               "interval": "10s",
               "intervalFactor": 1,
-              "legendFormat": "{{$division}} ({{$referenceTo}})",
+              "legendFormat": "{{$division}}",
               "metric": "container_memory_usage:sort_desc",
               "refId": "A",
               "step": 10
             },
             {
-              "expr": "sum (container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"})",
+              "expr": "sum (container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\"})",
               "hide": false,
               "interval": "10s",
               "intervalFactor": 1,
@@ -212,7 +188,7 @@ var PanelMemory = `{
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "$division memory usage. Referenced to $referenceTo",
+          "title": "$division memory usage",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -250,7 +226,7 @@ var PanelMemory = `{
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": false,
-      "title": "Pods Memory usage",
+      "title": "Pods CPU usage",
       "titleSize": "h6"
     }`
 
@@ -297,16 +273,16 @@ var PanelCPU = `{
           "steppedLine": true,
           "targets": [
             {
-              "expr": "sum (rate (container_cpu_usage_seconds_total{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}[1m])) by ($division,$referenceTo)",
+              "expr": "sum (rate (container_cpu_usage_seconds_total{namespace=~\"$NAMESPACE-.*\"}[1m])) by ($division)",
               "interval": "10s",
               "intervalFactor": 1,
-              "legendFormat": "{{$division}} ({{$referenceTo}})",
+              "legendFormat": "{{$division}} ",
               "metric": "container_cpu",
               "refId": "A",
               "step": 10
             },
             {
-              "expr": "sum (rate (container_cpu_usage_seconds_total{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}[1m]))",
+              "expr": "sum (rate (container_cpu_usage_seconds_total{namespace=~\"$NAMESPACE-.*\"}[1m]))",
               "interval": "10s",
               "intervalFactor": 1,
               "legendFormat": "Total",
@@ -317,7 +293,7 @@ var PanelCPU = `{
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "$division CPU usage (1m avg). Referenced to $referenceTo",
+          "title": "$division CPU usage (1m avg)",
           "tooltip": {
             "msResolution": true,
             "shared": true,
@@ -524,85 +500,14 @@ var GaugesDedicatedNodes = `{
           "valueName": "current"
         },
         {
-          "aliasColors": {},
-          "bars": false,
-          "datasource": "prometheus_source",
-          "fill": 1,
+          "content": "",
           "id": 35,
-          "legend": {
-            "alignAsTable": true,
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "rightSide": true,
-            "show": true,
-            "sideWidth": 600,
-            "total": false,
-            "values": false
-          },
-          "lines": false,
-          "linewidth": 1,
           "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
+          "mode": "markdown",
           "span": 4,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(ALERTS{alertname=~\"PodHighMemoryConsumption\",alertname=~\"$alerts\"}) by (namespace,pod_name)",
-              "intervalFactor": 1,
-              "legendFormat": "project {{namespace}} - affected Pod:  {{pod_name}}",
-              "refId": "A",
-              "step": 1
-            },
-            {
-              "expr": "sum(ALERTS{alertname=~\"NodeDown\",alertname=~\"$alerts\"}) by (namespace,pod_name)",
-              "intervalFactor": 1,
-              "legendFormat": "instance is: {{kubernetes_io_hostname}}",
-              "refId": "B",
-              "step": 1
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Alert: $alerts",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "name": null,
-            "show": false,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ]
+          "title": "",
+          "transparent": true,
+          "type": "text"
         },
         {
           "cacheTimeout": null,
@@ -925,481 +830,7 @@ var GaugesDedicatedNodes = `{
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": false,
-      "title": "Nodes usage",
-      "titleSize": "h6"
-    }`
-
-var ProjectResourceQuotas = `
-{
-      "collapse": false,
-      "height": 250,
-      "panels": [
-        {
-          "columns": [
-            {
-              "text": "Current",
-              "value": "current"
-            }
-          ],
-          "datasource": "prometheus_source",
-          "fontSize": "90%",
-          "id": 40,
-          "links": [],
-          "pageSize": null,
-          "scroll": true,
-          "showHeader": true,
-          "sort": {
-            "col": 0,
-            "desc": true
-          },
-          "span": 4,
-          "styles": [
-            {
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "pattern": "Time",
-              "type": "date"
-            },
-            {
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "decimals": 2,
-              "pattern": "/.*/",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            }
-          ],
-          "targets": [
-            {
-              "expr": "resource_quota_hard_pods{namespace=\"$Projects\"}",
-              "intervalFactor": 1,
-              "legendFormat": "Limit Pods",
-              "metric": "resource_quota_hard_pods",
-              "refId": "A",
-              "step": 1
-            },
-            {
-              "expr": "resource_quota_hard_services{namespace=\"$Projects\"}",
-              "intervalFactor": 1,
-              "legendFormat": "Limit Services",
-              "metric": "resource_quota_hard_services",
-              "refId": "B",
-              "step": 1
-            },
-            {
-              "expr": "resource_quota_hard_replicationcontrollers{namespace=\"$Projects\"}",
-              "intervalFactor": 1,
-              "legendFormat": "Limit Replication controllers",
-              "metric": "resource_quota_hard_replicationcontrollers",
-              "refId": "C",
-              "step": 1
-            },
-            {
-              "expr": "resource_quota_used_pods{namespace=\"$Projects\"}",
-              "intervalFactor": 1,
-              "legendFormat": "Used Pods",
-              "metric": "resource_quota_used_pods",
-              "refId": "D",
-              "step": 1
-            },
-            {
-              "expr": "resource_quota_used_services{namespace=\"$Projects\"}",
-              "intervalFactor": 1,
-              "legendFormat": "Used Services",
-              "metric": "resource_quota_used_services",
-              "refId": "E",
-              "step": 1
-            },
-            {
-              "expr": "resource_quota_used_replicationcontrollers{namespace=\"$Projects\"}",
-              "intervalFactor": 1,
-              "legendFormat": "Used Replication controllers",
-              "metric": "resource_quota_used_replicationcontrollers",
-              "refId": "F",
-              "step": 1
-            }
-          ],
-          "title": "Project $Projects - Resource Quota Modules",
-          "transform": "timeseries_aggregations",
-          "type": "table"
-        },
-        {
-          "aliasColors": {},
-          "bars": true,
-          "datasource": "prometheus_source",
-          "fill": 1,
-          "id": 41,
-          "legend": {
-            "alignAsTable": true,
-            "avg": false,
-            "current": true,
-            "max": false,
-            "min": false,
-            "rightSide": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": false,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 4,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum (resource_quota_hard_memory{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}) by (namespace) ",
-              "interval": "10s",
-              "intervalFactor": 1,
-              "legendFormat": "Limit",
-              "refId": "A",
-              "step": 10
-            },
-            {
-              "expr": "sum (resource_quota_used_memory{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}) by (namespace) ",
-              "hide": false,
-              "interval": "10s",
-              "intervalFactor": 1,
-              "legendFormat": "Reserved",
-              "refId": "B",
-              "step": 10
-            },
-            {
-              "expr": "sum (container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}) by (namespace) ",
-              "hide": false,
-              "interval": "10s",
-              "intervalFactor": 1,
-              "legendFormat": "In use",
-              "refId": "C",
-              "step": 10
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Project $Projects - Resource Quota Memory",
-          "tooltip": {
-            "shared": false,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "series",
-            "name": null,
-            "show": true,
-            "values": [
-              "current"
-            ]
-          },
-          "yaxes": [
-            {
-              "format": "bytes",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "bytes",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ]
-        },
-        {
-          "aliasColors": {},
-          "bars": true,
-          "datasource": "prometheus_source",
-          "fill": 1,
-          "id": 42,
-          "legend": {
-            "alignAsTable": true,
-            "avg": false,
-            "current": true,
-            "max": false,
-            "min": false,
-            "rightSide": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": false,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 4,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum (resource_quota_hard_cpu{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}/ 100000) by (namespace) ",
-              "interval": "10s",
-              "intervalFactor": 1,
-              "legendFormat": "Limit",
-              "refId": "A",
-              "step": 10
-            },
-            {
-              "expr": "sum (resource_quota_used_cpu{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}/ 100000) by (namespace) ",
-              "hide": false,
-              "interval": "10s",
-              "intervalFactor": 1,
-              "legendFormat": "Reserved",
-              "refId": "B",
-              "step": 10
-            },
-            {
-              "expr": "sum (rate (container_cpu_usage_seconds_total{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}[1m]))",
-              "hide": false,
-              "interval": "10s",
-              "intervalFactor": 1,
-              "legendFormat": "In use",
-              "refId": "C",
-              "step": 10
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Project $Projects - Resource Quota CPU",
-          "tooltip": {
-            "shared": false,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "series",
-            "name": null,
-            "show": true,
-            "values": [
-              "current"
-            ]
-          },
-          "yaxes": [
-            {
-              "format": "none",
-              "label": "cores",
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "bytes",
-              "label": "cores",
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ]
-        }
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": false,
-      "title": "Project Resource Quota",
-      "titleSize": "h6"
-    }
-    `
-
-var PodsLimits = `{
-      "collapse": false,
-      "height": 250,
-      "panels": [
-        {
-          "aliasColors": {},
-          "bars": true,
-          "datasource": "prometheus_source",
-          "fill": 1,
-          "id": 49,
-          "legend": {
-            "alignAsTable": true,
-            "avg": false,
-            "current": true,
-            "max": false,
-            "min": false,
-            "rightSide": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": false,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": true,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(container_spec_memory_limit_bytes{container_name!=\"POD\",namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"})  by (pod_name)",
-              "intervalFactor": 1,
-              "legendFormat": "Limit",
-              "refId": "D",
-              "step": 1
-            },
-            {
-              "expr": "sum (container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}) by (pod_name)",
-              "intervalFactor": 1,
-              "legendFormat": "Usage",
-              "refId": "A",
-              "step": 1
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Pod $Pods - Memory limit",
-          "tooltip": {
-            "shared": false,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "series",
-            "name": null,
-            "show": true,
-            "values": [
-              "current"
-            ]
-          },
-          "yaxes": [
-            {
-              "format": "bytes",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "bytes",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ]
-        },
-        {
-          "aliasColors": {},
-          "bars": true,
-          "datasource": "prometheus_source",
-          "fill": 1,
-          "id": 50,
-          "legend": {
-            "alignAsTable": true,
-            "avg": false,
-            "current": true,
-            "max": false,
-            "min": false,
-            "rightSide": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": false,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "repeat": null,
-          "seriesOverrides": [],
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(container_spec_cpu_quota{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"} / 100000) by (pod_name)",
-              "intervalFactor": 1,
-              "legendFormat": "Limit",
-              "refId": "A",
-              "step": 1
-            },
-            {
-              "expr": "sum (rate (container_cpu_usage_seconds_total{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}[1m])) by (pod_name)",
-              "intervalFactor": 2,
-              "legendFormat": "Usage",
-              "refId": "B",
-              "step": 2
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Pod $Pods - CPU limit",
-          "tooltip": {
-            "shared": false,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "series",
-            "name": null,
-            "show": true,
-            "values": [
-              "current"
-            ]
-          },
-          "yaxes": [
-            {
-              "format": "none",
-              "label": "cores",
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "bytes",
-              "label": "cores",
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ]
-        }
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": false,
-      "title": "Pods Limits Quotas",
+      "title": "Total usage",
       "titleSize": "h6"
     }`
 
@@ -1510,49 +941,6 @@ func DashboardTemplating(Label string, Namespace string) string { //TODO : hide 
         "type": "custom"
       },
       {
-        "allValue": null,
-        "current": {
-          "tags": [],
-          "text": "Nodes",
-          "value": "kubernetes_io_hostname"
-        },
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "referenceTo",
-        "options": [
-          {
-            "selected": false,
-            "text": "none",
-            "value": "none"
-          },
-          {
-            "selected": false,
-            "text": "Pods",
-            "value": "pod_name"
-          },
-          {
-            "selected": false,
-            "text": "Containers",
-            "value": "container_name"
-          },
-          {
-            "selected": false,
-            "text": "Namespaces",
-            "value": "namespace"
-          },
-          {
-            "selected": true,
-            "text": "Nodes",
-            "value": "kubernetes_io_hostname"
-          }
-        ],
-        "query": "none,pod_name,container_name,namespace,kubernetes_io_hostname",
-        "refresh": 0,
-        "type": "custom"
-      },
-      {
         "current": {
           "tags": [],
           "text": "` + Label + `",
@@ -1618,70 +1006,7 @@ func DashboardTemplating(Label string, Namespace string) string { //TODO : hide 
         ],
         "query": "` + Namespace + `",
         "type": "constant"
-      },
-      {
-        "allValue": ".*",
-        "datasource": "prometheus_source",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": false,
-        "name": "Projects",
-        "options": [],
-        "query": "container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\"}",
-        "refresh": 1,
-        "regex": "/.*namespace=\"([^\"]*).*/",
-        "sort": 3,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {
-          "text": "none",
-          "value": "none"
-        },
-        "datasource": "prometheus_source",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": false,
-        "name": "Pods",
-        "options": [],
-        "query": "container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}",
-        "refresh": 1,
-        "regex": "/.*pod_name=\"([^\"]*).*/",
-        "sort": 3,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": "",
-        "current": {
-        },
-        "datasource": "prometheus_source",
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "alerts",
-        "options": [],
-        "query": "ALERTS{alertname=~\".*\"}",
-        "refresh": 1,
-        "regex": "/.*alertname=\"([^\"]*).*/",
-        "sort": 3,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      }`
+      },`
 
 	return template
 }
@@ -1690,10 +1015,8 @@ func DashboardTemplating(Label string, Namespace string) string { //TODO : hide 
 //TODO, change 1m averages to 5m or so, cause of the 120% error in gauges
 //TODO overwrite should be a parameter only used when updating dashboard
 
-func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOpressure bool, PanelResourcequotas bool) string {
+func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOpressure bool) string {
 	var DashboardPanels = dashboardHead //+ PanelIOpressure+ "," + GaugesDedicatedNodes + "," + PanelCPU + "," + PanelMemory
-
-	DashboardPanels = DashboardPanels + Help + ","
 
 	if panelGauges == true {
 		DashboardPanels = DashboardPanels + GaugesDedicatedNodes + ","
@@ -1706,12 +1029,6 @@ func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOp
 	}
 	if panelIOpressure == true {
 		DashboardPanels = DashboardPanels + PanelIOpressure + ","
-	}
-
-	if PanelResourcequotas == true {
-		DashboardPanels = DashboardPanels + ProjectResourceQuotas + ","
-
-		DashboardPanels = DashboardPanels + PodsLimits + ","
 	}
 
 	//The last comma has to be removed, otherwise the dashboard is invalid
