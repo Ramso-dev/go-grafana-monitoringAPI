@@ -105,6 +105,12 @@ func InitEnvironmentVariables() {
 			fmt.Println("OSCP_API environment var missing or invalid")
 
 		}
+
+		fmt.Println("SERVICE_ACCOUNT: ", ServiceAccount)
+		fmt.Println("GRAFANA_URL: ", grafanaBaseURL)
+		fmt.Println("PORTAL_API: ", apiBaseURL)
+		fmt.Println("PROMETHEUS_URL: ", prometheusURL)
+		fmt.Println("OSCP_API: ", OSCPBaseURL)
 	} else {
 		fmt.Println("Using testing environment.V2")
 	}
