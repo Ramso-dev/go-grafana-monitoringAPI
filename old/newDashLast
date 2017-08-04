@@ -554,28 +554,21 @@ var GaugesDedicatedNodes = `{
           "stack": false,
           "steppedLine": false,
           "targets": [
-              {
-                "expr": "sum(ALERTS{namespace=~\"$NAMESPACE-.*\",alertname=~\"PodHighMemoryConsumption\",alertname=~\"$alerts\"}) by (namespace,pod_name)",
-                "intervalFactor": 1,
-                "legendFormat": "project {{namespace}} - affected Pod:  {{pod_name}}",
-                "refId": "A",
-                "step": 1
-              },
-              {
-                "expr": "sum(ALERTS{namespace=~\"$NAMESPACE-.*\",alertname=~\"NodeDown\",alertname=~\"$alerts\"}) by (namespace,pod_name,instance)",
-                "intervalFactor": 1,
-                "legendFormat": "Cannot reach {{instance}} ",
-                "refId": "B",
-                "step": 1
-              },
-              {
-                "expr": "sum(ALERTS{namespace=~\"$NAMESPACE-.*\",alertname=~\"PodHighCPUConsumption\",alertname=~\"$alerts\"}) by (namespace,pod_name)",
-                "intervalFactor": 1,
-                "legendFormat": "project {{namespace}} - affected Pod:  {{pod_name}}",
-                "refId": "C",
-                "step": 1
-              }
-            ],
+            {
+              "expr": "sum(ALERTS{alertname=~\"PodHighMemoryConsumption\",alertname=~\"$alerts\"}) by (namespace,pod_name)",
+              "intervalFactor": 1,
+              "legendFormat": "project {{namespace}} - affected Pod:  {{pod_name}}",
+              "refId": "A",
+              "step": 1
+            },
+            {
+              "expr": "sum(ALERTS{alertname=~\"NodeDown\",alertname=~\"$alerts\"}) by (namespace,pod_name)",
+              "intervalFactor": 1,
+              "legendFormat": "instance is: {{kubernetes_io_hostname}}",
+              "refId": "B",
+              "step": 1
+            }
+          ],
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
@@ -959,7 +952,7 @@ var ProjectResourceQuotas = `
             "col": 0,
             "desc": true
           },
-          "span": 2,
+          "span": 4,
           "styles": [
             {
               "dateFormat": "YYYY-MM-DD HH:mm:ss",
@@ -1060,7 +1053,7 @@ var ProjectResourceQuotas = `
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
-          "span": 5,
+          "span": 4,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -1068,7 +1061,7 @@ var ProjectResourceQuotas = `
               "expr": "sum (resource_quota_hard_memory{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}) by (namespace) ",
               "interval": "10s",
               "intervalFactor": 1,
-              "legendFormat": "Reservation Limit",
+              "legendFormat": "Limit",
               "refId": "A",
               "step": 10
             },
@@ -1082,30 +1075,12 @@ var ProjectResourceQuotas = `
               "step": 10
             },
             {
-              "expr": "sum (resource_quota_hard_limit_memory{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}) by (namespace) ",
-              "hide": false,
-              "interval": "10s",
-              "intervalFactor": 1,
-              "legendFormat": "Memory Limit",
-              "refId": "C",
-              "step": 10
-            },
-            {
-              "expr": "sum (resource_quota_used_limit_memory{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}) by (namespace) ",
+              "expr": "sum (container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}) by (namespace) ",
               "hide": false,
               "interval": "10s",
               "intervalFactor": 1,
               "legendFormat": "In use",
-              "refId": "D",
-              "step": 10
-            },
-            {
-              "expr": "sum (container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}) by (namespace) ",
-              "hide": true,
-              "interval": "10s",
-              "intervalFactor": 1,
-              "legendFormat": "In use (2)",
-              "refId": "E",
+              "refId": "C",
               "step": 10
             }
           ],
@@ -1172,7 +1147,7 @@ var ProjectResourceQuotas = `
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
-          "span": 5,
+          "span": 4,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -1180,7 +1155,7 @@ var ProjectResourceQuotas = `
               "expr": "sum (resource_quota_hard_cpu{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}/ 100000) by (namespace) ",
               "interval": "10s",
               "intervalFactor": 1,
-              "legendFormat": "Reservation limit",
+              "legendFormat": "Limit",
               "refId": "A",
               "step": 10
             },
@@ -1194,30 +1169,12 @@ var ProjectResourceQuotas = `
               "step": 10
             },
             {
-              "expr": "sum (resource_quota_hard_limit_cpu{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}/ 100000) by (namespace) ",
-              "hide": false,
-              "interval": "10s",
-              "intervalFactor": 1,
-              "legendFormat": "CPU limit",
-              "refId": "C",
-              "step": 10
-            },
-            {
-              "expr": "sum (resource_quota_used_limit_cpu{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}/ 100000) by (namespace) ",
+              "expr": "sum (rate (container_cpu_usage_seconds_total{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}[1m]))",
               "hide": false,
               "interval": "10s",
               "intervalFactor": 1,
               "legendFormat": "In use",
-              "refId": "D",
-              "step": 10
-            },
-            {
-              "expr": "sum (rate (container_cpu_usage_seconds_total{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}[1m]))",
-              "hide": true,
-              "interval": "10s",
-              "intervalFactor": 1,
-              "legendFormat": "In use(2)",
-              "refId": "E",
+              "refId": "C",
               "step": 10
             }
           ],
