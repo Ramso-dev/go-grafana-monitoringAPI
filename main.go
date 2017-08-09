@@ -77,7 +77,7 @@ var grafanaUserPassword = "2QkNlf7C8DG2Qtrj"
 
 func InitEnvironmentVariables() {
 	if os.Getenv("PROD") == "true" {
-		fmt.Println("Using production environment.V2")
+		fmt.Println("Using production environment.V2.09.08.2017")
 		ServiceAccount = os.Getenv("SERVICE_ACCOUNT")
 		grafanaBaseURL = os.Getenv("GRAFANA_URL")
 		apiBaseURL = os.Getenv("PORTAL_API")
@@ -112,7 +112,7 @@ func InitEnvironmentVariables() {
 		fmt.Println("PROMETHEUS_URL: ", prometheusURL)
 		fmt.Println("OSCP_API: ", OSCPBaseURL)
 	} else {
-		fmt.Println("Using testing environment.V2")
+		fmt.Println("Using testing environment.V2.09.08.2017")
 	}
 }
 
