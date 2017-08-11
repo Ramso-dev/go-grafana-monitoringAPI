@@ -118,6 +118,8 @@ func InitEnvironmentVariables() {
 
 func createOrg(w http.ResponseWriter, req *http.Request) {
 
+	fmt.Println("------------- createOrg --------------------")
+
 	var org Org
 	_ = json.NewDecoder(req.Body).Decode(&org)
 	fmt.Println("Org:>", org)
@@ -169,6 +171,8 @@ func createOrg(w http.ResponseWriter, req *http.Request) {
 
 func searchOrgByName(w http.ResponseWriter, req *http.Request) {
 
+	fmt.Println("------------- searchOrgByName --------------------")
+
 	var org Org
 	_ = json.NewDecoder(req.Body).Decode(&org)
 	fmt.Println("Org:>", org)
@@ -206,6 +210,8 @@ func searchOrgByName(w http.ResponseWriter, req *http.Request) {
 }
 
 func searchUsersInOrg(w http.ResponseWriter, req *http.Request) {
+
+	fmt.Println("------------- searchUsersInOrg --------------------")
 
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
@@ -245,6 +251,8 @@ func searchUsersInOrg(w http.ResponseWriter, req *http.Request) {
 
 func searchUserByEmail(w http.ResponseWriter, req *http.Request) {
 
+	fmt.Println("------------- searchUserByEmail --------------------")
+
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
 	fmt.Println("requestData:>", requestData)
@@ -282,6 +290,8 @@ func searchUserByEmail(w http.ResponseWriter, req *http.Request) {
 }
 
 func deleteUser(w http.ResponseWriter, req *http.Request) {
+
+	fmt.Println("------------- deleteUser --------------------")
 
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
@@ -321,6 +331,8 @@ func deleteUser(w http.ResponseWriter, req *http.Request) {
 
 func deleteGlobalUser(w http.ResponseWriter, req *http.Request) {
 
+	fmt.Println("------------- deleteGlobalUser --------------------")
+
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
 	fmt.Println("requestData delete:>", requestData)
@@ -358,6 +370,8 @@ func deleteGlobalUser(w http.ResponseWriter, req *http.Request) {
 }
 
 func createUser(w http.ResponseWriter, req *http.Request) {
+
+	fmt.Println("------------- createUser --------------------")
 
 	var user User
 
@@ -410,6 +424,8 @@ func createUser(w http.ResponseWriter, req *http.Request) {
 
 func addUserToOrg(w http.ResponseWriter, req *http.Request) {
 
+	fmt.Println("------------- addUserToOrg --------------------")
+
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
 	fmt.Println("requestData:>", requestData)
@@ -451,6 +467,8 @@ func addUserToOrg(w http.ResponseWriter, req *http.Request) {
 
 func switchUserToOrg(w http.ResponseWriter, req *http.Request) {
 
+	fmt.Println("------------- switchUserToOrg --------------------")
+
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
 	fmt.Println("requestData:>", requestData)
@@ -483,6 +501,8 @@ func switchUserToOrg(w http.ResponseWriter, req *http.Request) {
 }
 
 func setViewerRole(w http.ResponseWriter, req *http.Request) {
+
+	fmt.Println("------------- setViewerRole --------------------")
 
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
@@ -522,6 +542,8 @@ func setViewerRole(w http.ResponseWriter, req *http.Request) {
 
 func removeFromMainOrg(w http.ResponseWriter, req *http.Request) {
 
+	fmt.Println("------------- removeFromMainOrg --------------------")
+
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
 	fmt.Println("requestData:>", requestData)
@@ -554,6 +576,8 @@ func removeFromMainOrg(w http.ResponseWriter, req *http.Request) {
 
 func createDashboard(w http.ResponseWriter, req *http.Request) {
 
+	fmt.Println("------------- createDashboard --------------------")
+
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
 	fmt.Println("requestData:>", requestData)
@@ -562,16 +586,23 @@ func createDashboard(w http.ResponseWriter, req *http.Request) {
 
 	//ONLY FOR TESTING
 	//requestData.TenantLabel = "shared"
-	//requestData.TenantID = "cw"
+	requestData.TenantID = "cw"
 
 	//dashboardJSON := DashboardJSON1A + DashboardTemplating(requestData.TenantLabel, requestData.TenantID) + DashboardJSON1B
 
 	//In case the tenant has no dedicated nodes, the gauges shouldbt be in the dashboard
-	if requestData.TenantLabel == "null" {
+
+	var varDedicatedNodes = true
+	if requestData.TenantLabel == "null" || requestData.TenantLabel == "undefined" {
 		requestData.PanelGauges = false
 		requestData.PanelIOpressure = false
+		varDedicatedNodes = false
 	}
-	dashboardJSON := DashboardPanels(requestData.PanelGauges, requestData.PanelCpu, requestData.PanelMemory, requestData.PanelIOpressure, requestData.PanelResourcequotas) + DashboardTemplating(requestData.TenantLabel, requestData.TenantID) + DashboardJSON1B
+
+	fmt.Println("TenantLabel is : ", requestData.TenantLabel, ",TenantID is : ", requestData.TenantID, ",varDedicatedNodes is : ", varDedicatedNodes)
+	//dashboardJSON := DashboardPanels(requestData.PanelGauges, requestData.PanelCpu, requestData.PanelMemory, requestData.PanelIOpressure, requestData.PanelResourcequotas) + DashboardTemplating(requestData.TenantLabel, requestData.TenantID) + DashboardJSON1B
+	dashboardJSON := DashboardPanels(requestData.PanelGauges, requestData.PanelCpu, requestData.PanelMemory, requestData.PanelIOpressure, requestData.PanelResourcequotas) +
+		Templating(true, true, true, true, true, requestData.TenantLabel, varDedicatedNodes, true, requestData.TenantID, true, true, true) + DashboardJSON1B
 
 	rawIn := json.RawMessage(dashboardJSON)
 	dashboardBytes, err := rawIn.MarshalJSON()
@@ -580,9 +611,6 @@ func createDashboard(w http.ResponseWriter, req *http.Request) {
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	req.SetBasicAuth(requestData.Email, grafanaUserPassword)
-	fmt.Println(grafanaUser.Login)
-	fmt.Println(requestData.Email)
-	fmt.Println(grafanaUserPassword)
 
 	if err != nil {
 		fmt.Println(err)
@@ -608,6 +636,8 @@ func createDashboard(w http.ResponseWriter, req *http.Request) {
 }
 
 func createSource(w http.ResponseWriter, req *http.Request) {
+
+	fmt.Println("------------- createSource --------------------")
 
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
@@ -655,6 +685,8 @@ func createSource(w http.ResponseWriter, req *http.Request) {
 }
 
 func getUserTenant(w http.ResponseWriter, req *http.Request) {
+
+	fmt.Println("------------- getUserTenant --------------------")
 
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)

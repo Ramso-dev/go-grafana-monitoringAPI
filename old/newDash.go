@@ -1486,93 +1486,9 @@ var DashboardJSON1B = `
 
 `
 
-//TODO remove namespace from current value by the division selection
-//TODO, change 1m averages to 5m or so, cause of the 120% error in gauges
-//TODO overwrite should be a parameter only used when updating dashboard
+func DashboardTemplating(Label string, Namespace string) string { //TODO : hide the Customer and the Nodes
 
-func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOpressure bool, PanelResourcequotas bool) string {
-	var DashboardPanels = dashboardHead //+ PanelIOpressure+ "," + GaugesDedicatedNodes + "," + PanelCPU + "," + PanelMemory
-
-	DashboardPanels = DashboardPanels + Help + ","
-
-	if panelGauges == true {
-		DashboardPanels = DashboardPanels + GaugesDedicatedNodes + ","
-	}
-	if panelCpu == true {
-		DashboardPanels = DashboardPanels + PanelCPU + ","
-	}
-	if panelMemory == true {
-		DashboardPanels = DashboardPanels + PanelMemory + ","
-	}
-	if panelIOpressure == true {
-		DashboardPanels = DashboardPanels + PanelIOpressure + ","
-	}
-
-	if PanelResourcequotas == true {
-		DashboardPanels = DashboardPanels + ProjectResourceQuotas + ","
-
-		DashboardPanels = DashboardPanels + PodsLimits + ","
-	}
-
-	//The last comma has to be removed, otherwise the dashboard is invalid
-	if strings.HasSuffix(DashboardPanels, ",") {
-		DashboardPanels = DashboardPanels[:len(DashboardPanels)-len(",")]
-	}
-
-	return DashboardPanels
-}
-
-func Templating(varNode bool, varShowTotal bool, varDivision bool, varReferenceTo bool, varCustomer bool, Label string, varDedicatedNodes bool, varNAMESPACE bool, Namespace string, varProjects bool, varPods bool, varAlerts bool) string {
-
-	var Templating = templatingHead
-
-	if varNode == true {
-		Templating = Templating + templatingNode + ","
-	}
-	if varShowTotal == true {
-		Templating = Templating + templatingShowTotal + ","
-	}
-
-	if varDivision == true {
-		Templating = Templating + templatingDivision + ","
-	}
-
-	if varReferenceTo == true {
-		Templating = Templating + templatingReferenceTo + ","
-	}
-
-	if varCustomer == true {
-		Templating = Templating + templatingCustomer(Label) + ","
-	}
-
-	if varDedicatedNodes == true {
-		Templating = Templating + templatingDedicatedNodes + ","
-	}
-
-	if varNAMESPACE == true {
-		Templating = Templating + templatingNAMESPACE(Namespace) + ","
-	}
-
-	if varProjects == true {
-		Templating = Templating + templatingProjects + ","
-	}
-
-	if varPods == true {
-		Templating = Templating + templatingPods + ","
-	}
-	if varAlerts == true {
-		Templating = Templating + templatingAlerts + ","
-	}
-
-	//The last comma has to be removed, otherwise the dashboard is invalid
-	if strings.HasSuffix(Templating, ",") {
-		Templating = Templating[:len(Templating)-len(",")]
-	}
-
-	return Templating
-}
-
-var templatingHead = `  
+	var template = `  
   ],
   "schemaVersion": 14,
   "style": "dark",
@@ -1580,9 +1496,8 @@ var templatingHead = `
     "kubernetes"
   ],
   "templating": {
-    "list": [`
-
-var templatingNode = `{
+    "list": [
+      {
         "allValue": ".*",
         "current": {
           "text": "All",
@@ -1604,8 +1519,8 @@ var templatingNode = `{
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }`
-var templatingShowTotal = `{
+      },
+      {
         "allValue": ".*",
         "current": {
           "tags": [],
@@ -1631,8 +1546,8 @@ var templatingShowTotal = `{
         ],
         "query": "false",
         "type": "custom"
-      }`
-var templatingDivision = `{
+      },
+            {
         "allValue": null,
         "current": {
           "tags": [],
@@ -1663,8 +1578,8 @@ var templatingDivision = `{
         ],
         "query": "pod_name,container_name,namespace",
         "type": "custom"
-      }`
-var templatingReferenceTo = `{
+      },
+      {
         "allValue": null,
         "current": {
           "tags": [],
@@ -1701,10 +1616,8 @@ var templatingReferenceTo = `{
         "query": "none,pod_name,container_name,namespace",
         "refresh": 0,
         "type": "custom"
-      }`
-
-func templatingCustomer(Label string) string {
-	var templatingCustomer = `{
+      },
+      {
         "current": {
           "tags": [],
           "text": "` + Label + `",
@@ -1722,12 +1635,8 @@ func templatingCustomer(Label string) string {
         ],
         "query": "` + Label + `",
         "type": "constant"
-      }`
-
-	return templatingCustomer
-}
-
-var templatingDedicatedNodes = `{
+      },
+      {
         "allValue": null,
         "current": {
           "tags": [],
@@ -1756,10 +1665,8 @@ var templatingDedicatedNodes = `{
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }`
-
-func templatingNAMESPACE(Namespace string) string {
-	var templatingNAMESPACE = `{
+      },
+	  {
         "current": {
           "text": "` + Namespace + `",
           "value": "` + Namespace + `"
@@ -1776,11 +1683,8 @@ func templatingNAMESPACE(Namespace string) string {
         ],
         "query": "` + Namespace + `",
         "type": "constant"
-      }`
-	return templatingNAMESPACE
-}
-
-var templatingProjects = `{
+      },
+      {
         "allValue": ".*",
         "datasource": "prometheus_source",
         "hide": 0,
@@ -1798,8 +1702,8 @@ var templatingProjects = `{
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }`
-var templatingPods = `{
+      },
+      {
         "allValue": ".*",
         "current": {
           "text": "none",
@@ -1821,8 +1725,8 @@ var templatingPods = `{
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }`
-var templatingAlerts = `{
+      },
+      {
         "allValue": "",
         "current": {
         },
@@ -1843,3 +1747,57 @@ var templatingAlerts = `{
         "type": "query",
         "useTags": false
       }`
+
+	return template
+}
+
+//TODO remove namespace from current value by the division selection
+//TODO, change 1m averages to 5m or so, cause of the 120% error in gauges
+//TODO overwrite should be a parameter only used when updating dashboard
+
+func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOpressure bool, PanelResourcequotas bool) string {
+	var DashboardPanels = dashboardHead //+ PanelIOpressure+ "," + GaugesDedicatedNodes + "," + PanelCPU + "," + PanelMemory
+
+	DashboardPanels = DashboardPanels + Help + ","
+
+	if panelGauges == true {
+		DashboardPanels = DashboardPanels + GaugesDedicatedNodes + ","
+	}
+	if panelCpu == true {
+		DashboardPanels = DashboardPanels + PanelCPU + ","
+	}
+	if panelMemory == true {
+		DashboardPanels = DashboardPanels + PanelMemory + ","
+	}
+	if panelIOpressure == true {
+		DashboardPanels = DashboardPanels + PanelIOpressure + ","
+	}
+
+	if PanelResourcequotas == true {
+		DashboardPanels = DashboardPanels + ProjectResourceQuotas + ","
+
+		DashboardPanels = DashboardPanels + PodsLimits + ","
+	}
+
+	//The last comma has to be removed, otherwise the dashboard is invalid
+	if strings.HasSuffix(DashboardPanels, ",") {
+		DashboardPanels = DashboardPanels[:len(DashboardPanels)-len(",")]
+	}
+
+	/*
+	     	if panelGauges == true {
+	   		DashboardPanels = DashboardPanels + "," + GaugesDedicatedNodes
+	   	}
+	   	if panelCpu == true {
+	   		DashboardPanels = DashboardPanels + "," + PanelCPU
+	   	}
+	   	if panelMemory == true {
+	   		DashboardPanels = DashboardPanels + "," + PanelMemory
+	   	}
+	   	if panelIOpressure == true {
+	   		DashboardPanels = DashboardPanels + "," + PanelIOpressure
+	   	}
+	*/
+
+	return DashboardPanels
+}
