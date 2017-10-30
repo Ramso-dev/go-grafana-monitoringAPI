@@ -1267,7 +1267,110 @@ var ProjectResourceQuotas = `
       "titleSize": "h6"
     }
     `
-
+var NodeLimits = `
+{
+      "collapse": false,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "datasource": "prometheus_source",
+          "fill": 1,
+          "id": 55,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": true,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum (machine_memory_bytes{kubernetes_io_hostname=~\"^$DedicatedNodes$\"})",
+              "intervalFactor": 1,
+              "legendFormat": "Machine total memory",
+              "refId": "B",
+              "step": 1
+            },
+            {
+              "expr": "sum(container_spec_memory_limit_bytes{container_name!=\"POD\",kubernetes_io_hostname=~\"$DedicatedNodes\",image!=\"\"}) ",
+              "intervalFactor": 1,
+              "legendFormat": "Node's total set limit",
+              "refId": "D",
+              "step": 1
+            },
+            {
+              "expr": "sum(container_spec_memory_limit_bytes{kubernetes_io_hostname=~\"$DedicatedNodes\",image!=\"\"})  by ($division) != 0",
+              "hide": false,
+              "intervalFactor": 1,
+              "legendFormat": "Limit - {{$division}}",
+              "refId": "A",
+              "step": 1
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Node $DedicatedNodes - Total memory limits set",
+          "tooltip": {
+            "shared": false,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "series",
+            "name": null,
+            "show": true,
+            "values": [
+              "current"
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "bytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Nodes Limits Quotas",
+      "titleSize": "h6"
+    }
+`
 var PodsLimits = `{
       "collapse": false,
       "height": 250,
@@ -1511,6 +1614,7 @@ func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOp
 	if PanelResourcequotas == true {
 		DashboardPanels = DashboardPanels + ProjectResourceQuotas + ","
 
+		DashboardPanels = DashboardPanels + NodeLimits + ","
 		DashboardPanels = DashboardPanels + PodsLimits + ","
 	}
 
@@ -1750,7 +1854,7 @@ var templatingDedicatedNodes = `{
         "query": "up{customer=\"$Customer\"}",
         "refresh": 1,
         "regex": "/.*instance=\"([^\"]*).*/",
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",
@@ -1792,7 +1896,7 @@ var templatingProjects = `{
         "query": "container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\"}",
         "refresh": 1,
         "regex": "/.*namespace=\"([^\"]*).*/",
-        "sort": 3,
+        "sort": 1,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",
@@ -1815,7 +1919,7 @@ var templatingPods = `{
         "query": "container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}",
         "refresh": 1,
         "regex": "/.*pod_name=\"([^\"]*).*/",
-        "sort": 3,
+        "sort": 1,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",

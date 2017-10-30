@@ -53,7 +53,10 @@ type AddUserToOrg struct {
 //Test environment
 var grafanaBaseURL = "https://grafana-cw-portal-plg.playground.itandtel.at" //"http://localhost:8081"
 //var prometheusURL = "https://promtest-cw-portal-plg.playground.itandtel.at"
-var prometheusURL = "https://promtest2-cw-portal-plg.playground.itandtel.at"
+var prometheusURL = "https://prometheus-cw-portal-plg.playground.itandtel.at"
+
+//var grafanaAdminUsername = "admin"
+//var grafanaAdminPassword = "admin1234"
 
 var apiBaseURL = "https://api.playground.itandtel.at"
 var OSCPBaseURL = "https://manage.playground.itandtel.at"
@@ -122,12 +125,11 @@ func createOrg(w http.ResponseWriter, req *http.Request) {
 
 	var org Org
 	_ = json.NewDecoder(req.Body).Decode(&org)
-	fmt.Println("Org:>", org)
+	fmt.Println("- org : ", org)
 
 	jsonStr, err := json.Marshal(org)
 	if err != nil {
 		fmt.Println(err)
-		//return
 	}
 
 	req, err = http.NewRequest("POST", grafanaBaseURL+"/api/orgs", bytes.NewBuffer(jsonStr))
@@ -136,7 +138,6 @@ func createOrg(w http.ResponseWriter, req *http.Request) {
 	req.SetBasicAuth(grafanaAdminUsername, grafanaAdminPassword)
 
 	if err != nil {
-
 		fmt.Fprintf(w, "%s", err)
 		panic(err)
 	}
@@ -144,26 +145,15 @@ func createOrg(w http.ResponseWriter, req *http.Request) {
 	client := &http.Client{}
 
 	resp, err := client.Do(req)
-	fmt.Println(resp)
-	fmt.Println(err)
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("response Status:", resp.StatusCode)
-	//fmt.Println("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	fmt.Println("response Body:", string(body))
+	fmt.Println("- status:", resp.StatusCode, " ,body:", string(body))
 
-	/*json, err := json.Marshal(string(body))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}*/
-
-	w.WriteHeader(resp.StatusCode)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(body)
 
@@ -175,7 +165,7 @@ func searchOrgByName(w http.ResponseWriter, req *http.Request) {
 
 	var org Org
 	_ = json.NewDecoder(req.Body).Decode(&org)
-	fmt.Println("Org:>", org)
+	fmt.Println("- org to search : ", org)
 
 	req, err := http.NewRequest("GET", grafanaBaseURL+"/api/orgs/name/"+org.Name, nil)
 	req.Header.Set("Accept", "application/json")
@@ -190,20 +180,15 @@ func searchOrgByName(w http.ResponseWriter, req *http.Request) {
 	client := &http.Client{}
 
 	resp, err := client.Do(req)
-	fmt.Println(resp)
-	fmt.Println(err)
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("response Status:", resp.StatusCode)
-	//fmt.Println("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	//fmt.Println("response Body:", string(body))
+	fmt.Println("- status:", resp.StatusCode, " ,body:", string(body))
 
-	w.WriteHeader(resp.StatusCode)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(body)
 
@@ -215,7 +200,7 @@ func searchUsersInOrg(w http.ResponseWriter, req *http.Request) {
 
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
-	fmt.Println("searchUsersInOrg requestData:>", requestData)
+	fmt.Println("- org id:", requestData.OrgId)
 
 	req, err := http.NewRequest("GET", grafanaBaseURL+"/api/orgs/"+requestData.OrgId+"/users", nil)
 	req.Header.Set("Accept", "application/json")
@@ -228,36 +213,30 @@ func searchUsersInOrg(w http.ResponseWriter, req *http.Request) {
 	}
 
 	client := &http.Client{}
-
 	resp, err := client.Do(req)
-	fmt.Println(resp)
-	fmt.Println(err)
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("response Status:", resp.StatusCode)
-	//fmt.Println("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	//fmt.Println("response Body:", string(body))
+	fmt.Println("- status:", resp.StatusCode, " ,body:", string(body))
 
-	w.WriteHeader(resp.StatusCode)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(body)
 
 }
 
-func searchUserByEmail(w http.ResponseWriter, req *http.Request) {
+func searchUserByEmail(w http.ResponseWriter, req *http.Request) { //TODO: not used in fronted, remove? or what?
 
 	fmt.Println("------------- searchUserByEmail --------------------")
 
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
-	fmt.Println("requestData:>", requestData)
+	fmt.Println("- user's email:", requestData.Email)
 
-	req, err := http.NewRequest("GET", grafanaBaseURL+"/api/users/lookup?loginOrEmail="+requestData.Email, nil)
+	req, err := http.NewRequest("GET", grafanaBaseURL+"/api/users/lookup?loginOrEmail="+requestData.Email, nil) //TODO : this is not working
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	req.SetBasicAuth(grafanaAdminUsername, grafanaAdminPassword)
@@ -268,22 +247,16 @@ func searchUserByEmail(w http.ResponseWriter, req *http.Request) {
 	}
 
 	client := &http.Client{}
-
 	resp, err := client.Do(req)
-	fmt.Println(resp)
-	fmt.Println(err)
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("response Status:", resp.StatusCode)
-	//fmt.Println("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	//fmt.Println("response Body:", string(body))
+	fmt.Println("- status:", resp.StatusCode, " ,body:", string(body))
 
-	w.WriteHeader(resp.StatusCode)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(body)
 
@@ -580,13 +553,14 @@ func createDashboard(w http.ResponseWriter, req *http.Request) {
 
 	var requestData RequestData
 	_ = json.NewDecoder(req.Body).Decode(&requestData)
-	fmt.Println("requestData:>", requestData)
 
 	//dashboardJSON := DashboardJSON1A + DashboardTemplating(requestData.TenantLabel) + requestData.TenantID + DashboardJSON1B
 
 	//ONLY FOR TESTING
-	//requestData.TenantLabel = "shared"
+	requestData.TenantLabel = "shared"
 	requestData.TenantID = "cw"
+
+	fmt.Println("requestData:>", requestData)
 
 	//dashboardJSON := DashboardJSON1A + DashboardTemplating(requestData.TenantLabel, requestData.TenantID) + DashboardJSON1B
 
@@ -936,10 +910,10 @@ func InitRoutes() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/", handleView)
 
-	r.HandleFunc("/grafana/org", createOrg)
-	r.HandleFunc("/grafana/org/search", searchOrgByName)
-	r.HandleFunc("/grafana/org/users", searchUsersInOrg)
-	r.HandleFunc("/grafana/org/join", addUserToOrg)
+	r.HandleFunc("/grafana/org", createOrg).Methods("POST")
+	r.HandleFunc("/grafana/org/search", searchOrgByName).Methods("POST")
+	r.HandleFunc("/grafana/org/users", searchUsersInOrg).Methods("POST")
+	r.HandleFunc("/grafana/org/join", addUserToOrg).Methods("POST")
 
 	r.HandleFunc("/grafana/user", createUser)
 	r.HandleFunc("/grafana/user/switch", switchUserToOrg)
