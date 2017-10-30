@@ -557,8 +557,8 @@ func createDashboard(w http.ResponseWriter, req *http.Request) {
 	//dashboardJSON := DashboardJSON1A + DashboardTemplating(requestData.TenantLabel) + requestData.TenantID + DashboardJSON1B
 
 	//ONLY FOR TESTING
-	requestData.TenantLabel = "shared"
-	requestData.TenantID = "cw"
+	//requestData.TenantLabel = "shared"
+	//requestData.TenantID = "cw"
 
 	fmt.Println("requestData:>", requestData)
 
