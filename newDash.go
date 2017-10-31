@@ -1596,7 +1596,8 @@ var DashboardJSON1B = `
 func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOpressure bool, PanelResourcequotas bool) string {
 	var DashboardPanels = dashboardHead //+ PanelIOpressure+ "," + GaugesDedicatedNodes + "," + PanelCPU + "," + PanelMemory
 
-	DashboardPanels = DashboardPanels + Help + ","
+	//DashboardPanels = DashboardPanels + Help + ","
+	DashboardPanels = DashboardPanels + ","
 
 	if panelGauges == true {
 		DashboardPanels = DashboardPanels + GaugesDedicatedNodes + ","
