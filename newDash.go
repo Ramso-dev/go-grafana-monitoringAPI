@@ -1597,7 +1597,7 @@ func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOp
 	var DashboardPanels = dashboardHead //+ PanelIOpressure+ "," + GaugesDedicatedNodes + "," + PanelCPU + "," + PanelMemory
 
 	//DashboardPanels = DashboardPanels + Help + ","
-	DashboardPanels = DashboardPanels + ","
+	DashboardPanels = DashboardPanels
 
 	if panelGauges == true {
 		DashboardPanels = DashboardPanels + GaugesDedicatedNodes + ","
