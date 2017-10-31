@@ -1626,7 +1626,7 @@ func DashboardPanels(panelGauges bool, panelCpu bool, panelMemory bool, panelIOp
 	return DashboardPanels
 }
 
-func Templating(varNode bool, varShowTotal bool, varDivision bool, varReferenceTo bool, varCustomer bool, Label string, varDedicatedNodes bool, varNAMESPACE bool, Namespace string, varProjects bool, varPods bool, varAlerts bool) string {
+func Templating(varNode bool, varShowTotal bool, varDivision bool, varReferenceTo bool, varCustomer bool, Label string, varDedicatedNodes bool, varUseProdNodes bool, varNAMESPACE bool, Namespace string, varProjects bool, varPods bool, varAlerts bool) string {
 
 	var Templating = templatingHead
 
@@ -1651,6 +1651,10 @@ func Templating(varNode bool, varShowTotal bool, varDivision bool, varReferenceT
 
 	if varDedicatedNodes == true {
 		Templating = Templating + templatingDedicatedNodes + ","
+	}
+
+	if varUseProdNodes == true {
+		Templating = Templating + templatingUseProdNodes + ","
 	}
 
 	if varNAMESPACE == true {
@@ -1851,9 +1855,34 @@ var templatingDedicatedNodes = `{
             "value": "$__all"
           }
         ],
-        "query": "up{customer=\"$Customer\"}",
+        "query": "up{customer=~\"$Customer\",prod=~\"$UseProdNodes\"}",
         "refresh": 1,
         "regex": "/.*instance=\"([^\"]*).*/",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }`
+var templatingUseProdNodes = `
+{
+        "allValue": ".*",
+        "current": {
+          "tags": [],
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "prometheus_source",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": false,
+        "name": "UseProdNodes",
+        "options": [],
+        "query": "up{prod=~\".*\"}",
+        "refresh": 1,
+        "regex": "/.*prod=\"([^\"]*).*/",
         "sort": 1,
         "tagValuesQuery": "",
         "tags": [],

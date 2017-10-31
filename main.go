@@ -71,12 +71,15 @@ var ServiceAccount = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ld
 //Grafana admin
 //var grafanaAdminUsername = "admin"
 //var grafanaAdminPassword = "admin"
+
 var grafanaAdminUsername = "udo@cloudwerkstatt.com"
 var grafanaAdminPassword = "cwsuperadmin1234"
 
 //Grafana standard user
 var grafanaUser User
 var grafanaUserPassword = "2QkNlf7C8DG2Qtrj"
+
+var testSet = true
 
 func InitEnvironmentVariables() {
 	if os.Getenv("PROD") == "true" {
@@ -86,6 +89,8 @@ func InitEnvironmentVariables() {
 		apiBaseURL = os.Getenv("PORTAL_API")
 		prometheusURL = os.Getenv("PROMETHEUS_URL")
 		OSCPBaseURL = os.Getenv("OSCP_API")
+
+		testSet = false
 
 		if ServiceAccount == "" {
 			fmt.Println("SERVICE_ACCOUNT environment var missing or invalid")
@@ -556,6 +561,11 @@ func createDashboard(w http.ResponseWriter, req *http.Request) {
 
 	//dashboardJSON := DashboardJSON1A + DashboardTemplating(requestData.TenantLabel) + requestData.TenantID + DashboardJSON1B
 
+	if testSet == true {
+		fmt.Println("!! testSet is true")
+		requestData.TenantLabel = "shared"
+		requestData.TenantID = "cw"
+	}
 	//ONLY FOR TESTING
 	//requestData.TenantLabel = "shared"
 	//requestData.TenantID = "cw"
@@ -567,16 +577,18 @@ func createDashboard(w http.ResponseWriter, req *http.Request) {
 	//In case the tenant has no dedicated nodes, the gauges shouldbt be in the dashboard
 
 	var varDedicatedNodes = true
+	var varUseProdNodes = true
 	if requestData.TenantLabel == "null" || requestData.TenantLabel == "undefined" {
 		requestData.PanelGauges = false
 		requestData.PanelIOpressure = false
 		varDedicatedNodes = false
+		varUseProdNodes = false
 	}
 
-	fmt.Println("TenantLabel is : ", requestData.TenantLabel, ",TenantID is : ", requestData.TenantID, ",varDedicatedNodes is : ", varDedicatedNodes)
+	fmt.Println("TenantLabel is : ", requestData.TenantLabel, ",TenantID is : ", requestData.TenantID, ",varDedicatedNodes is : ", varDedicatedNodes, ",varUseProdNodes is : ", varUseProdNodes)
 	//dashboardJSON := DashboardPanels(requestData.PanelGauges, requestData.PanelCpu, requestData.PanelMemory, requestData.PanelIOpressure, requestData.PanelResourcequotas) + DashboardTemplating(requestData.TenantLabel, requestData.TenantID) + DashboardJSON1B
 	dashboardJSON := DashboardPanels(requestData.PanelGauges, requestData.PanelCpu, requestData.PanelMemory, requestData.PanelIOpressure, requestData.PanelResourcequotas) +
-		Templating(true, true, true, true, true, requestData.TenantLabel, varDedicatedNodes, true, requestData.TenantID, true, true, true) + DashboardJSON1B
+		Templating(true, true, true, true, true, requestData.TenantLabel, varDedicatedNodes, varUseProdNodes, true, requestData.TenantID, true, true, true) + DashboardJSON1B
 
 	rawIn := json.RawMessage(dashboardJSON)
 	dashboardBytes, err := rawIn.MarshalJSON()
