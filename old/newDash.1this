@@ -190,7 +190,7 @@ var PanelMemory = `{
           "steppedLine": true,
           "targets": [
             {
-              "expr": "sum (container_memory_usage_bytes{kubernetes_io_hostname=~\"$DedicatedNodes\",namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}) by ($division,$referenceTo)",
+              "expr": "sum (container_memory_usage_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}) by ($division,$referenceTo)",
               "interval": "10s",
               "intervalFactor": 1,
               "legendFormat": "{{$division}} ({{$referenceTo}})",
@@ -199,7 +199,7 @@ var PanelMemory = `{
               "step": 10
             },
             {
-              "expr": "sum (container_memory_usage_bytes{showTotal=~\"$showTotal\",kubernetes_io_hostname=~\"$DedicatedNodes\",namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"})",
+              "expr": "sum (container_memory_usage_bytes{showTotal=~\"$showTotal\",namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"})",
               "hide": false,
               "interval": "10s",
               "intervalFactor": 1,
@@ -297,7 +297,7 @@ var PanelCPU = `{
           "steppedLine": true,
           "targets": [
             {
-              "expr": "sum (rate (container_cpu_usage_seconds_total{kubernetes_io_hostname=~\"$DedicatedNodes\",namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}[1m])) by ($division,$referenceTo)",
+              "expr": "sum (rate (container_cpu_usage_seconds_total{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}[1m])) by ($division,$referenceTo)",
               "interval": "10s",
               "intervalFactor": 1,
               "legendFormat": "{{$division}} ({{$referenceTo}})",
@@ -306,7 +306,7 @@ var PanelCPU = `{
               "step": 10
             },
             {
-              "expr": "sum (rate (container_cpu_usage_seconds_total{showTotal=~\"$showTotal\",kubernetes_io_hostname=~\"$DedicatedNodes\",namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}[1m]))",
+              "expr": "sum (rate (container_cpu_usage_seconds_total{showTotal=~\"$showTotal\",namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",pod_name=~\"$Pods\"}[1m]))",
               "interval": "10s",
               "intervalFactor": 1,
               "legendFormat": "Total",
@@ -1865,7 +1865,8 @@ var templatingDedicatedNodes = `{
         "type": "query",
         "useTags": false
       }`
-var templatingUseProdNodes = `{
+var templatingUseProdNodes = `
+{
         "allValue": ".*",
         "current": {
           "tags": [],
@@ -1921,7 +1922,7 @@ var templatingProjects = `{
         "multi": false,
         "name": "Projects",
         "options": [],
-        "query": "container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",kubernetes_io_hostname=~\"$DedicatedNodes\"}",
+        "query": "container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\"}",
         "refresh": 1,
         "regex": "/.*namespace=\"([^\"]*).*/",
         "sort": 1,
@@ -1944,7 +1945,7 @@ var templatingPods = `{
         "multi": false,
         "name": "Pods",
         "options": [],
-        "query": "container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\",kubernetes_io_hostname=~\"$DedicatedNodes\"}",
+        "query": "container_memory_working_set_bytes{namespace=~\"$NAMESPACE-.*\",namespace=~\"$Projects\"}",
         "refresh": 1,
         "regex": "/.*pod_name=\"([^\"]*).*/",
         "sort": 1,
