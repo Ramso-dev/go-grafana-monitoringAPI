@@ -92,6 +92,10 @@ func InitEnvironmentVariables() {
 
 		testSet = false
 
+		if testSet == false {
+			fmt.Println("testSet is", testSet)
+		}
+
 		if ServiceAccount == "" {
 			fmt.Println("SERVICE_ACCOUNT environment var missing or invalid")
 
