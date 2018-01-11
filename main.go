@@ -51,6 +51,7 @@ type AddUserToOrg struct {
 }
 
 //Test environment
+/*
 var grafanaBaseURL = "https://grafana-cw-portal-plg.playground.itandtel.at" //"http://localhost:8081"
 //var prometheusURL = "https://promtest-cw-portal-plg.playground.itandtel.at"
 var prometheusURL = "https://prometheus-cw-portal-plg.playground.itandtel.at"
@@ -61,13 +62,15 @@ var prometheusURL = "https://prometheus-cw-portal-plg.playground.itandtel.at"
 var apiBaseURL = "https://api.playground.itandtel.at"
 var OSCPBaseURL = "https://manage.playground.itandtel.at"
 var ServiceAccount = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJjdy1wb3J0YWwtcGxnIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImFwaS1hZG1pbi10b2tlbi1xMXAyaCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJhcGktYWRtaW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI5YmRjNDRjMC0xODY2LTExZTctYmRiNS0wMDUwNTY4YzU3ODEiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6Y3ctcG9ydGFsLXBsZzphcGktYWRtaW4ifQ.Lxz6OfrGe_7DaDWZfmpDwqgmcV0ON6wTCoyRJJJaH5O9TyHDyC2tAm-XB0CYue20U9ymBNFUE8XN9Gam1JUfYwesxNLhwzdwpgN-ML58_f_g6rL7ZmhWrS6GZVe8ajvlGsXdYTCaTCiT5Dct8wnkI7S8Hq7Vlu7IrctQvWwwYuLvQgpBf8B8-He98t5QmtN8SJJedEZGvQ7aJ_YOu8Ho9K0i4W-KCCX13FYHnxW4s0gtlMMKXg4pFCV1Vm6gK4TxdWiXI6Im13BzGza6XVz-A3OGNvI4Lbk54nY2PjhmJNQ9doagDYByuG2eQZY1PzYuKag_IMXsD7MKTOcUrdy8Pw"
-
+*/
 //Production
-/*
+
 var OSCPBaseURL = "https://manage.cloud.itandtel.at"
 var apiBaseURL = "https://api.cloud.itandtel.at"
 var ServiceAccount = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJjdy1wb3J0YWwiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiYXBpLWFkbWluLXRva2VuLWNpc2YxIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImFwaS1hZG1pbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjY2NmIxNTA2LWYxMmQtMTFlNS04MmZmLTAwNTA1NmE2MmZhNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpjdy1wb3J0YWw6YXBpLWFkbWluIn0.Y947NTQNFKwY_hmojrNOpX3OnpIYPZmPhSOqzWn-QeYgVWpYbSCzjChFuqIiiOvJG-fFg_3TTAakyLGu_gIUvaviPfZcPwND_aaFbzPVnYtBEEWBP-KF109O7xiJpEQL1a-U1YmAcZZUglNTexMu239VpSTFsiK8yks_Vq63lMSotUWpIMJLd5d2ucd-87qotmTbxqB5n4R5pZWTE0wZEvC_WJmZc-IfzwXY8sr5mbis_Bcbifj7yAxmGQUHvsYOShhIKXE_m0afYmdG32fOTHg9IvKpXYxmaf2na_cLWD_i3cogrjFOQ0VN0FD03ZfFkaDvDAP9XlgOipwHku7Zhg"
-*/
+var grafanaBaseURL = "https://grafana.cloud.itandtel.at"
+var prometheusURL = "https://prometheus.cloud.itandtel.at"
+
 //Grafana admin
 //var grafanaAdminUsername = "admin"
 //var grafanaAdminPassword = "admin"
