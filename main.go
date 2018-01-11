@@ -167,8 +167,10 @@ func createOrg(w http.ResponseWriter, req *http.Request) {
 	fmt.Println("- status:", resp.StatusCode, " ,body:", string(body))
 
 	if resp.StatusCode <= 199 || resp.StatusCode >= 300 {
+		fmt.Println("first")
 	http.Error(w, "Org exists", resp.StatusCode)
 	} else {
+		fmt.Println("first")
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(body)
 	}
